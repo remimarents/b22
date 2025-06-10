@@ -22,7 +22,9 @@ jobs:
           port: 21
           local-dir: ./
           server-dir: /
+          passive: true
+          dry-run: false
           exclude: |
-            **/.git*
-            **/.github/*
+            .git*
+            .github*
             README.md
