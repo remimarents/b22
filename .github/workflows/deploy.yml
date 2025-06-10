@@ -1,0 +1,27 @@
+name: Deploy til b22 via FTP
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Hent repoet
+        uses: actions/checkout@v3
+
+      - name: Last opp til FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4
+        with:
+          server: ftp.terapisomvirker.no
+          username: b22deploy@terapisomvirker.no
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
+          local-dir: ./ # Hele repoet
+          server-dir: /public_html/b22/
+          exclude: |
+            **/.git*
+            **/.github/*
+            README.md
