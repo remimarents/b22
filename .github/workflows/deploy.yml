@@ -1,4 +1,4 @@
-name: Deploy til b22 via FTP
+name: Deploy til terapisomvirker.no/b22 via FTP
 
 on:
   push:
@@ -12,14 +12,15 @@ jobs:
       - name: Hent repoet
         uses: actions/checkout@v3
 
-      - name: Last opp til FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4
+      - name: Last opp til FTP-server
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ftp.terapisomvirker.no
-          username: b22deploy@terapisomvirker.no
+          username: git@terapisomvirker.no
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
-          local-dir: ./ # Hele repoet
+          port: 21
+          local-dir: ./
           server-dir: /public_html/b22/
           exclude: |
             **/.git*
