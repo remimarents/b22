@@ -1,5 +1,4 @@
 name: Deploy til terapisomvirker.no/b22 via FTP
-#test om denne godtar is som betaling 
 
 on:
   push:
