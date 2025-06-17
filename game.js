@@ -10,13 +10,20 @@ const BASE_SPEED = 200;
 let MAX_OBSTACLES = 3;
 const SPAWN_INTERVAL = 1500;
 let texture = 'mm';
+let spawnTimer = 0;
 
 function init() {
   const overlay = document.getElementById('overlay');
+  const splash = document.getElementById('splash');
   const nameInput = document.getElementById('nameInput');
   const startBtn = document.getElementById('startBtn');
   const hsDiv = document.getElementById('hs');
   const hsList = document.getElementById('overlayHSList');
+
+  setTimeout(() => {
+    if (splash) splash.style.display = 'none';
+    if (overlay) overlay.style.display = 'flex';
+  }, 3000);
 
   loadHighscores(hsDiv, hsList);
 
@@ -86,6 +93,7 @@ function startGame() {
   playerSpeed = 650;
   obstacleSpeed = BASE_SPEED;
   gameOverFlag = false;
+  spawnTimer = 0;
   if (music) music.stop();
 
   const config = {
@@ -108,7 +116,7 @@ function startGame() {
 }
 
 function preload() {
-  this.load.image('bg', 'assets/background_grass.png?v=2');
+  this.load.image('bg', 'https://terapisomvirker.no/b22/assets/background_grass.png');
   this.load.image('mm', 'assets/mm.png?v=2');
   this.load.image('mf', 'assets/mf.png?v=2');
   this.load.image('fm', 'assets/fm.png?v=2');
@@ -143,12 +151,6 @@ function create() {
   });
 
   obstacles = this.physics.add.group();
-  this.time.addEvent({
-    delay: SPAWN_INTERVAL,
-    callback: spawnObstacle,
-    callbackScope: this,
-    loop: true
-  });
 
   scoreText = this.add.text(10, 10, 'Poeng: 0', {
     font: '24px sans-serif',
@@ -183,13 +185,18 @@ function spawnObstacle() {
 }
 
 function update(time, delta) {
-  if (!this.obstacleTimer) {
-    this.obstacleTimer = 0;
-  }
+  if (!this.obstacleTimer) this.obstacleTimer = 0;
   this.obstacleTimer += delta;
   if (this.obstacleTimer > 15000 && MAX_OBSTACLES < 7) {
     MAX_OBSTACLES++;
     this.obstacleTimer = 0;
+  }
+
+  spawnTimer += delta;
+  const spawnInterval = Math.max(400, SPAWN_INTERVAL * (BASE_SPEED / obstacleSpeed));
+  if (spawnTimer > spawnInterval) {
+    spawnObstacle();
+    spawnTimer = 0;
   }
 
   if (gameOverFlag || !character) return;
