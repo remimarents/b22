@@ -7,7 +7,9 @@
   <style>
     body, html { margin:0; padding:0; overflow:hidden; background:#a0d8f1; }
     #hs { position:absolute; top:5px; right:5px; background:#fff8; padding:10px; border-radius:4px; font-family:sans-serif; }
-    #overlay { position:absolute; left:0; top:0; width:100%; height:100%; background:#000c; color:#fff; display:flex; align-items:center; justify-content:center; flex-direction:column; font-family:sans-serif; font-size:20px; }
+    #overlay { position:absolute; left:0; top:0; width:100%; height:100%; background:#000c; color:#fff; display:flex; align-items:center; justify-content:center; flex-direction:column; font-family:sans-serif; font-size:20px; text-align:center; }
+    #overlay img { max-width:80%; height:auto; margin-bottom:20px; }
+    .opt-group { margin:10px 0; }
     button { font-size:18px; padding:10px 20px; margin-top:10px; }
     input { font-size:18px; padding:5px; }
   </style>
@@ -17,6 +19,17 @@
 
 <div id="hs">Highscore lastes...</div>
 <div id="overlay">
+  <img src="assets/splash.png" alt="splash"/>
+  <div class="opt-group">
+    Terapeut:
+    <label><input type="radio" name="playerGender" value="m" checked> M</label>
+    <label><input type="radio" name="playerGender" value="f"> F</label>
+  </div>
+  <div class="opt-group">
+    Bruker:
+    <label><input type="radio" name="userGender" value="m" checked> M</label>
+    <label><input type="radio" name="userGender" value="f"> F</label>
+  </div>
   <div>Skriv inn kallenavn:</div>
   <input id="nameInput" maxlength="12" placeholder="Navn"/>
   <button id="startBtn">Start spillet</button>
