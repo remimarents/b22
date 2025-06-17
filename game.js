@@ -89,10 +89,12 @@ function startGame() {
 }
 
 function preload() {
-  for (let i = 1; i <= 4; i++) {
-    this.load.image(`right_${i}`, `assets/right_${i}.png`);
-    this.load.image(`left_${i}`, `assets/left_${i}.png`);
-  }
+  const variants = ['mm', 'fm', 'mf', 'ff'];
+  variants.forEach((name, idx) => {
+    const i = idx + 1;
+    this.load.image(`right_${i}`, `assets/${name}.png`);
+    this.load.image(`left_${i}`, `assets/${name}.png`);
+  });
   this.load.image('obst_barnevogn', 'assets/obst_barnevogn.png');
   this.load.image('obst_hundemann', 'assets/obst_hundemann.png');
   this.load.image('obst_skater', 'assets/obst_skater.png');
