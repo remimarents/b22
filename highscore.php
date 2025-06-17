@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-$file = __DIR__.'/highscores.json';
+$file = __DIR__.'/scores.json';
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $data = @file_get_contents($file);
     echo $data ?: '[]';
