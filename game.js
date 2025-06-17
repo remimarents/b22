@@ -14,13 +14,7 @@ function init() {
   const startBtn = document.getElementById('startBtn');
   const hsDiv = document.getElementById('hs');
 
-  fetch('highscore.php')
-    .then(r => r.json())
-    .then(data => {
-      hsDiv.innerText = '🏆 Highscore:\n' +
-        data.map((e, i) => `${i + 1}. ${e.name} – ${e.score}`).join('\n');
-    })
-    .catch(e => hsDiv.innerText = 'Kunne ikke laste highscore.');
+  loadHighscores(hsDiv);
 
   startBtn.onclick = () => {
     const n = nameInput.value.trim();
@@ -37,6 +31,27 @@ function init() {
     overlay.style.display = 'none';
     startGame();
   };
+}
+
+async function loadHighscores(target) {
+  try {
+    let r = await fetch('highscore.php', { cache: 'no-store' });
+    if (!r.ok) throw new Error('php failed');
+    let data = await r.json();
+    target.innerText = '🏆 Highscore:\n' +
+      data.map((e, i) => `${i + 1}. ${e.name} – ${e.score}`).join('\n');
+  } catch (e) {
+    console.warn('highscore.php failed, trying scores.json', e);
+    try {
+      const r = await fetch('scores.json', { cache: 'no-store' });
+      const data = await r.json();
+      target.innerText = '🏆 Highscore:\n' +
+        data.map((e, i) => `${i + 1}. ${e.name} – ${e.score}`).join('\n');
+    } catch (err) {
+      console.error('Could not load highscores', err);
+      target.innerText = 'Kunne ikke laste highscore.';
+    }
+  }
 }
 
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
@@ -74,10 +89,12 @@ function startGame() {
 }
 
 function preload() {
-  for (let i = 1; i <= 4; i++) {
-    this.load.image(`right_${i}`, `assets/right_${i}.png`);
-    this.load.image(`left_${i}`, `assets/left_${i}.png`);
-  }
+  const variants = ['mm', 'fm', 'mf', 'ff'];
+  variants.forEach((name, idx) => {
+    const i = idx + 1;
+    this.load.image(`right_${i}`, `assets/${name}.png`);
+    this.load.image(`left_${i}`, `assets/${name}.png`);
+  });
   this.load.image('obst_barnevogn', 'assets/obst_barnevogn.png');
   this.load.image('obst_hundemann', 'assets/obst_hundemann.png');
   this.load.image('obst_skater', 'assets/obst_skater.png');
@@ -215,14 +232,17 @@ function gameOver(scene) {
   btn.on('pointerdown', () => submitScore(Math.floor(score)));
 }
 
-function submitScore(val) {
-  fetch('highscore.php', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: playerName, score: val })
-  })
-    .then(r => r.json())
-    .then(res => alert(res.success ? 'Highscore lagret!' : 'Kunne ikke lagre.'))
-    .then(() => window.location.reload())
-    .catch(() => alert('Feilet ved sending av highscore.'));
+async function submitScore(val) {
+  try {
+    const r = await fetch('highscore.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: playerName, score: val })
+    });
+    const res = await r.json();
+    alert(res.success ? 'Highscore lagret!' : 'Kunne ikke lagre.');
+    window.location.reload();
+  } catch (e) {
+    alert('Feilet ved sending av highscore.');
+  }
 }
